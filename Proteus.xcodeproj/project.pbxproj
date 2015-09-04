@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		7D0BD62A1B995E6F006D5C72 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D0BD6291B995E6F006D5C72 /* main.swift */; };
 		7D0BD6381B996131006D5C72 /* BaselineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D0BD6371B996131006D5C72 /* BaselineTests.swift */; };
+		7D0BD63F1B998521006D5C72 /* scanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D0BD63E1B998521006D5C72 /* scanner.swift */; settings = {ASSET_TAGS = (); }; };
+		7D0BD6401B998521006D5C72 /* scanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D0BD63E1B998521006D5C72 /* scanner.swift */; settings = {ASSET_TAGS = (); }; };
+		7D0BD6421B998993006D5C72 /* lexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D0BD6411B998993006D5C72 /* lexer.swift */; settings = {ASSET_TAGS = (); }; };
+		7D0BD6431B998993006D5C72 /* lexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D0BD6411B998993006D5C72 /* lexer.swift */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -29,6 +33,8 @@
 		7D0BD6351B996131006D5C72 /* lexer_tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = lexer_tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D0BD6371B996131006D5C72 /* BaselineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BaselineTests.swift; path = tests/lexer/BaselineTests.swift; sourceTree = SOURCE_ROOT; };
 		7D0BD6391B996131006D5C72 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7D0BD63E1B998521006D5C72 /* scanner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = scanner.swift; sourceTree = "<group>"; };
+		7D0BD6411B998993006D5C72 /* lexer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = lexer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +77,8 @@
 			isa = PBXGroup;
 			children = (
 				7D0BD6291B995E6F006D5C72 /* main.swift */,
+				7D0BD63E1B998521006D5C72 /* scanner.swift */,
+				7D0BD6411B998993006D5C72 /* lexer.swift */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -197,6 +205,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7D0BD63F1B998521006D5C72 /* scanner.swift in Sources */,
+				7D0BD6421B998993006D5C72 /* lexer.swift in Sources */,
 				7D0BD62A1B995E6F006D5C72 /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -205,6 +215,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7D0BD6401B998521006D5C72 /* scanner.swift in Sources */,
+				7D0BD6431B998993006D5C72 /* lexer.swift in Sources */,
 				7D0BD6381B996131006D5C72 /* BaselineTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
