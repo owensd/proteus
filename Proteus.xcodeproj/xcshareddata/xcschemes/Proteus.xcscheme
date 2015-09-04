@@ -20,6 +20,20 @@
                ReferencedContainer = "container:Proteus.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "7D0BD6341B996131006D5C72"
+               BuildableName = "lexer_tests.xctest"
+               BlueprintName = "lexer_tests"
+               ReferencedContainer = "container:Proteus.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
