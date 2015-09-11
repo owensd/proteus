@@ -35,3 +35,7 @@ Carthage/Build
 
 # OS X
 .DS_Store
+
+# MKDocs
+docs/site
+
