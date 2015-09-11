@@ -2,23 +2,18 @@
     "docs": [
         {
             "location": "/", 
-            "text": "Welcome to MkDocs\n\n\nFor full documentation visit \nmkdocs.org\n.\n\n\nCommands\n\n\n\n\nmkdocs new [dir-name]\n - Create a new project.\n\n\nmkdocs serve\n - Start the live-reloading docs server.\n\n\nmkdocs build\n - Build the documentation site.\n\n\nmkdocs help\n - Print this help message.\n\n\n\n\nProject layout\n\n\nmkdocs.yml    # The configuration file.\ndocs/\n    index.md  # The documentation homepage.\n    ...       # Other markdown pages, images and other files.", 
-            "title": "Home"
+            "text": "Philosophy\n\n\nProteus is a modern, evolutionary take on the C programming language. The ability to write fast and efficient code shouldn't be tied to a language with weak syntax and rudimentary type constructs. Proteus' goal is to fix that.\n\n\nDesign Goals\n\n\nThe goals of the language center around the idea that programmers should be treated as adults; help them not make stupid mistakes, but still provide the entire power of the machine in a stream-lined fashion.\n\n\n\n\nincreased\n developer productivity\n\n\nfast, native code execution\n\n\nrich type constructs\n\n\npowerful metaprogramming facilities\n\n\nseemless interop with C libraries\n\n\nmodule and package management system\n\n\nintegrated build system\n\n\n\n\nMore to come!", 
+            "title": "Introduction"
         }, 
         {
-            "location": "/#welcome-to-mkdocs", 
-            "text": "For full documentation visit  mkdocs.org .", 
-            "title": "Welcome to MkDocs"
+            "location": "/#philosophy", 
+            "text": "Proteus is a modern, evolutionary take on the C programming language. The ability to write fast and efficient code shouldn't be tied to a language with weak syntax and rudimentary type constructs. Proteus' goal is to fix that.", 
+            "title": "Philosophy"
         }, 
         {
-            "location": "/#commands", 
-            "text": "mkdocs new [dir-name]  - Create a new project.  mkdocs serve  - Start the live-reloading docs server.  mkdocs build  - Build the documentation site.  mkdocs help  - Print this help message.", 
-            "title": "Commands"
-        }, 
-        {
-            "location": "/#project-layout", 
-            "text": "mkdocs.yml    # The configuration file.\ndocs/\n    index.md  # The documentation homepage.\n    ...       # Other markdown pages, images and other files.", 
-            "title": "Project layout"
+            "location": "/#design-goals", 
+            "text": "The goals of the language center around the idea that programmers should be treated as adults; help them not make stupid mistakes, but still provide the entire power of the machine in a stream-lined fashion.   increased  developer productivity  fast, native code execution  rich type constructs  powerful metaprogramming facilities  seemless interop with C libraries  module and package management system  integrated build system   More to come!", 
+            "title": "Design Goals"
         }
     ]
 }
