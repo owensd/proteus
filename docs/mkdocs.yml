@@ -1,2 +1,6 @@
 site_name: Proteus Documentation
 theme: readthedocs
+docs_dir: pages
+google_analytics: [ 'UA-9472449-7', 'owensd.io/proteus' ]
+pages:
+    - 'Introduction' : 'index.md'
