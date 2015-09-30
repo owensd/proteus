@@ -5,7 +5,13 @@ let path = Process.arguments[1]
 let content: String = try NSString(contentsOfFile: path, encoding: NSUTF8StringEncoding) as String
 let scanner = Scanner(content: content)
 
-
-while scanner.next() != nil {
-    print(scanner.peek()!, terminator: "")
+let lexer = Lexer(scanner: scanner)
+tokenLoop: while let token = lexer.next() {
+    switch token {
+        case .EOF: print("token: EOF"); break tokenLoop
+        default: print("token: \(token)")
+   }
+    
 }
+
+
