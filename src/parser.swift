@@ -101,51 +101,114 @@ class Lexer {
     }
 
     func next() -> Token? {
-        if scanner.next() == nil { return .EOF }
-        scanner.stall()
+        func work() -> Token? {
+            if scanner.next() == nil { return .EOF }
 
-        while let info = scanner.next() where isWhitespace(info.character) {}
-        scanner.stall()
-
-        guard let next = scanner.next() else { return .EOF }
-
-        if next.character == "\n" {
-            return .Terminal(line: next.line, column: next.column)
-        }
-        else if isValidIdentifierSignalCharacter(next.character) {
-            var content = String(next.character!)
-            while let info = scanner.next() where isValidIdenitifierCharacter(info.character) {
-                content.append(info.character!)
-            }
             scanner.stall()
 
-            if keywords.contains(content) {
-                return .Keyword(content, line: next.line, column: next.column)
-            }
-            else {
-                return .Identifier(content, line: next.line, column: next.column)
-            }
-        }
-        else if next.character == "(" {
-            return .OpenParen(line: next.line, column: next.column)
-        }
-        else if next.character == ")" {
-            return .CloseParen(line: next.line, column: next.column)
-        }
-        else if next.character == "\"" {
-            var content = String(next.character!)
-            while let info = scanner.next() where info.character != "\"" {
-                content.append(info.character!)
-            }
-            content.append(scanner.peek()!.character!)
+            while let info = scanner.next() where isWhitespace(info.character) {}
+            scanner.stall()
 
-            return .StringLiteral(content, line: next.line, column: next.column)
+            guard let next = scanner.next() else { return .EOF }
+
+            if next.character == "\n" {
+                return .Terminal(line: next.line, column: next.column)
+            }
+            else if isValidIdentifierSignalCharacter(next.character) {
+                var content = String(next.character!)
+                while let info = scanner.next() where isValidIdenitifierCharacter(info.character) {
+                    content.append(info.character!)
+                }
+                scanner.stall()
+
+                if keywords.contains(content) {
+                    return .Keyword(content, line: next.line, column: next.column)
+                }
+                else {
+                    return .Identifier(content, line: next.line, column: next.column)
+                }
+            }
+            else if next.character == "(" {
+                return .OpenParen(line: next.line, column: next.column)
+            }
+            else if next.character == ")" {
+                return .CloseParen(line: next.line, column: next.column)
+            }
+            else if next.character == "\"" {
+                var content = String(next.character!)
+                while let info = scanner.next() where info.character != "\"" {
+                    content.append(info.character!)
+                }
+                content.append(scanner.peek()!.character!)
+
+                return .StringLiteral(content, line: next.line, column: next.column)
+            }
+
+            return nil
         }
 
-        return nil
+        if case .EOF? = self.current {
+            self.current = nil
+        }
+        else {
+            self.current = work()
+        }
+        
+        return self.current
+    }
+
+    func tokenize() -> [Token] {
+        var tokens = [Token]()
+
+        while let token = self.next() { tokens.append(token) }
+
+        return tokens
     }
 
     func peek() -> Token? {
         return current
     }
+}
+
+enum Error : ErrorType {
+    case InvalidSyntax(String)
+}
+
+enum Statement {
+    case ImportStatement(keyword: Token, value: Token)
+}
+
+class Parser {
+    let filename: String
+
+    init(filename: String) {
+        self.filename = filename
+    }
+
+    func parse() throws -> [Statement] {
+        let content: String = try NSString(contentsOfFile: self.filename, encoding: NSUTF8StringEncoding) as String
+        let scanner = Scanner(content: content)
+        
+        let lexer = Lexer(scanner: scanner)
+
+        var parsed = [Statement]()
+        while let _ = lexer.next() {
+            if let importStatement = try parseImport(lexer) {
+                parsed.append(importStatement)
+            }
+        }
+
+        return parsed
+    }
+}
+
+func parseImport(lexer: Lexer) throws -> Statement? {
+    guard let keywordToken = lexer.peek() else { return nil }
+    guard case let .Keyword(keyword, _, _) = keywordToken where keyword == "import" else { return nil }
+    
+    guard let identifierToken = lexer.next() else { throw Error.InvalidSyntax("Expected identifier") }
+    guard case .Identifier(_, _, _) = identifierToken else { throw Error.InvalidSyntax("Expected identifier") }
+    guard case .Terminal(_, _)? = lexer.next() else { throw Error.InvalidSyntax("Expected terminal") }
+
+    return .ImportStatement(keyword: keywordToken, value: identifierToken)
 }
