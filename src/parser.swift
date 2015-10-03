@@ -64,6 +64,15 @@ enum Token {
     case StringLiteral(String, line: Int, column: Int)
     case Terminal(line: Int, column: Int)
     case EOF
+
+    var stringValue: String {
+        switch self {
+        case let .Identifier(value, _, _): return value
+        case let .StringLiteral(value, _, _): return value
+        case let .Keyword(value, _, _): return value
+        default: return ""
+        }
+    }
 }
 
 func isCharacterPartOfSet(c: Character?, set: NSCharacterSet) -> Bool {
@@ -172,10 +181,12 @@ class Lexer {
 
 enum Error : ErrorType {
     case InvalidSyntax(String)
+    case Generic(String)
 }
 
 enum Statement {
-    case ImportStatement(keyword: Token, value: Token)
+    case Import(keyword: Token, value: Token)
+    case Function(name: Token, params: [Token])
 }
 
 class Parser {
@@ -196,6 +207,9 @@ class Parser {
             if let importStatement = try parseImport(lexer) {
                 parsed.append(importStatement)
             }
+            else if let functionInvocationStatement = try parseFunctionInvocationStatement(lexer) {
+                parsed.append(functionInvocationStatement)
+            }
         }
 
         return parsed
@@ -210,5 +224,66 @@ func parseImport(lexer: Lexer) throws -> Statement? {
     guard case .Identifier(_, _, _) = identifierToken else { throw Error.InvalidSyntax("Expected identifier") }
     guard case .Terminal(_, _)? = lexer.next() else { throw Error.InvalidSyntax("Expected terminal") }
 
-    return .ImportStatement(keyword: keywordToken, value: identifierToken)
+    return .Import(keyword: keywordToken, value: identifierToken)
+}
+
+func parseFunctionInvocationStatement(lexer: Lexer) throws -> Statement? {
+    guard let identifierToken = lexer.peek() else { return nil }
+    guard case .Identifier = identifierToken else { return nil }
+
+    guard let openParenToken = lexer.next() else { return nil }
+    guard case .OpenParen = openParenToken else { return nil }
+
+    var params = [Token]()
+
+    while let nextToken = lexer.next() {
+        switch nextToken {
+        case .CloseParen:
+            if case .Terminal? = lexer.next() {
+                return .Function(name: identifierToken, params: params)
+            }
+            else {
+                throw Error.InvalidSyntax("Invalid function invocation")
+            }
+
+        case .StringLiteral:
+            params.append(nextToken)
+        
+        default:
+            throw Error.InvalidSyntax("Invalid function invocation")
+        }
+    }
+
+    throw Error.InvalidSyntax("Invalid function invocation") 
+}
+
+func convertASTToC(ast: [Statement]) throws -> String {
+    var code = ""
+
+    for statement in ast {
+        switch statement {
+        case let .Import(_, value): 
+            if value.stringValue == "stdlib" {
+                code += "#include <stdio.h>\n"
+            }
+            else {
+                throw Error.Generic("This import is not yet handled.")
+            }
+            
+        case let .Function(identifier, params):
+            // TODO(owensd): Fix the super hack here!
+
+            code += "int main(int argc, char **argv) {\n"
+
+            if identifier.stringValue == "print" {
+                code += "printf("
+                code += (params.map { $0.stringValue } as NSArray).componentsJoinedByString(",")
+                code += "\n);"
+            }
+
+            code += "\nreturn 0;}\n"
+        }
+    }
+
+    return code 
 }
