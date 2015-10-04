@@ -20,7 +20,16 @@ class Scanner {
     init(content: String) {
         self.content = content
         self.index = content.startIndex
+        self._defaults()
     }
+
+    func _defaults() {
+        self.index = content.startIndex
+        self.line = 0
+        self.column = 0
+        self.shouldStall = false
+        self.current = nil
+   }
 
     func stall() {
         shouldStall = true
@@ -53,6 +62,16 @@ class Scanner {
 
     func peek() -> ScannerInfo? {
         return current
+    }
+
+    func debugPrint() {
+        print("--- SCANNER INFO ---")
+        while let info = self.next() {
+            print("\(info)")
+        }
+        print("")
+
+        self._defaults()
     }
 }
 
@@ -177,6 +196,17 @@ class Lexer {
     func peek() -> Token? {
         return current
     }
+
+    func debugPrint() {
+        print("--- TOKENS ---")
+        while let token = self.next() {
+            print("\(token)")
+        }
+        print("")
+
+        self.scanner._defaults()
+        self.current = nil
+    }
 }
 
 enum Error : ErrorType {
@@ -184,24 +214,23 @@ enum Error : ErrorType {
     case Generic(String)
 }
 
+enum Declaration {
+    case Function(name: Token, arguments: [(Token, Token)], returnType: Token, body: [Statement])
+}
+
 enum Statement {
-    case Import(keyword: Token, value: Token)
+    case Import(package: Token)
     case Function(name: Token, params: [Token])
 }
 
 class Parser {
-    let filename: String
+    let lexer: Lexer
 
-    init(filename: String) {
-        self.filename = filename
+    init(lexer: Lexer) {
+        self.lexer = lexer
     }
 
     func parse() throws -> [Statement] {
-        let content: String = try NSString(contentsOfFile: self.filename, encoding: NSUTF8StringEncoding) as String
-        let scanner = Scanner(content: content)
-        
-        let lexer = Lexer(scanner: scanner)
-
         var parsed = [Statement]()
         while let _ = lexer.next() {
             if let importStatement = try parseImport(lexer) {
@@ -224,7 +253,7 @@ func parseImport(lexer: Lexer) throws -> Statement? {
     guard case .Identifier(_, _, _) = identifierToken else { throw Error.InvalidSyntax("Expected identifier") }
     guard case .Terminal(_, _)? = lexer.next() else { throw Error.InvalidSyntax("Expected terminal") }
 
-    return .Import(keyword: keywordToken, value: identifierToken)
+    return .Import(package: identifierToken)
 }
 
 func parseFunctionInvocationStatement(lexer: Lexer) throws -> Statement? {
@@ -260,30 +289,33 @@ func parseFunctionInvocationStatement(lexer: Lexer) throws -> Statement? {
 func convertASTToC(ast: [Statement]) throws -> String {
     var code = ""
 
-    for statement in ast {
-        switch statement {
-        case let .Import(_, value): 
-            if value.stringValue == "stdlib" {
+    func isImport(statement: Statement) -> Bool {
+        if case .Import = statement { return true } else { return false }
+    }
+
+    for importStatement in ast.filter({isImport($0)}) {
+        if case let .Import(package) = importStatement { 
+            if package.stringValue == "stdlib" {
+                code += "#include <stdlib.h>\n"
                 code += "#include <stdio.h>\n"
             }
-            else {
-                throw Error.Generic("This import is not yet handled.")
-            }
-            
-        case let .Function(identifier, params):
-            // TODO(owensd): Fix the super hack here!
-
-            code += "int main(int argc, char **argv) {\n"
-
-            if identifier.stringValue == "print" {
-                code += "printf("
-                code += (params.map { $0.stringValue } as NSArray).componentsJoinedByString(",")
-                code += "\n);"
-            }
-
-            code += "\nreturn 0;}\n"
         }
     }
 
+    // TODO(owensd): Need a mechanism to actually dictate we have the main function.
+
+    code += "int main(int argc, char **argv) {\n"
+    
+    for statement in ast.filter({!isImport($0)}) {
+        if case let .Function(identifier, params) = statement {
+            if identifier.stringValue == "print" {
+                code += "printf("
+                code += (params.map { $0.stringValue } as NSArray).componentsJoinedByString(",")
+                code += ");"
+            }
+        }
+    }
+
+    code += "\nreturn 0;\n}\n"
     return code 
 }
