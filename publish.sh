@@ -18,5 +18,5 @@ git tag $DAY
 git push origin master
 git push --tags
 
-zip -r ../day004.zip * -x bin/* publish.sh
+zip -r ../$DAY.zip * -x bin/* publish.sh
 
