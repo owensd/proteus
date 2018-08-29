@@ -1,3 +1,51 @@
 import stdlib
 
-print("Welcome to Proteus Development!")
+// #include <stdlib.h>
+
+fn main() {
+    println("Welcome to Proteus Development!")
+}
+
+// int main(int argc, char **argv) {
+//     printf("Welcome to Proteus Devopmen!\n");
+//     return 0;
+// }
+
+fn main_alt(argc: i32, argv: ref string[]) -> i32 {
+    return -1;
+}
+
+// int main(int argc, char **argv) {
+//     return -1;
+// }
+
+struct Circle {
+    radius: f32
+    center: (i32, i32)
+}
+
+// struct Circle__Tuple_i32_i32 {
+//     int32_t _0;
+//     int32_t _1;
+// };
+//
+// struct Circle {
+//     float radius;
+//     struct Circle__Tuple_i32_i32 center;
+// };
+
+trait Renderer {
+    fn draw()
+    fn area() -> f32
+}
+
+// not converted
+
+impl Renderer for Circle {
+    fn draw() { }
+    fn area() -> f32 { return self.radius * self.radius * 3.14 }
+}
+
+// void Renderer__Circle__draw(struct Circle *self) { }
+// float Renderer__Circle__area(struct Circle *self) { return self->radius * self->radius * 3.14; }
+

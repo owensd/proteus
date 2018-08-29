@@ -1,12 +1,25 @@
 
 BINDIR=bin
-SRCDIR=src
+CLANG_FLAGS=-Wall -gmodules
 
-protc:
+.PHONY: build clean test build-protc build-tests run-tests
+
+build: build-protc build-tests
+
+create-output-dir:
 	mkdir -p $(BINDIR)
-	xcrun -sdk macosx swiftc $(SRCDIR)/*.swift -o $(BINDIR)/protc
 
-.PHONY: clean
+build-protc: create-output-dir
+	clang $(CLANG_FLAGS) protc/protc.c -o $(BINDIR)/protc
+
+build-tests: create-output-dir
+	clang $(CLANG_FLAGS) tests/tests.c -o $(BINDIR)/protc_tests
+
+run-tests:
+	$(BINDIR)/protc_tests
+
+test: build-tests run-tests
+
 clean:
 	rm $(BINDIR)/*
 

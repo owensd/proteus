@@ -1,0 +1,16 @@
+# https://zed0.co.uk/clang-format-configurator/
+---
+Language: Cpp
+BasedOnStyle: LLVM
+IndentWidth: 4
+AlignTrailingComments: true
+SpacesBeforeTrailingComments: 4
+ColumnLimit: 120
+PointerAlignment: 'Right'
+SortIncludes: false
+BreakBeforeBraces: Custom
+BraceWrapping:
+    AfterExternBlock: false
+    AfterFunction: false
+    BeforeElse: true
+...
