@@ -4,6 +4,7 @@ static char *token_type_to_string(enum token_type token_type) {
     switch (token_type) {
     case TOKEN_EOF:
         return "TOKEN_EOF";
+
     case TOKEN_KEYWORD:
         return "TOKEN_KEYWORD";
     case TOKEN_OPEN_PAREN:
@@ -14,6 +15,8 @@ static char *token_type_to_string(enum token_type token_type) {
         return "TOKEN_OPEN_BRACE";
     case TOKEN_CLOSE_BRACE:
         return "TOKEN_CLOSE_BRACE";
+    case TOKEN_COMMA:
+        return "TOKEN_COMMA";
     case TOKEN_FUNC_RETURN_TYPE_DECL:
         return "TOKEN_FUNC_RETURN_TYPE_DECL";
     case TOKEN_INTEGER_LITERAL:
@@ -22,6 +25,25 @@ static char *token_type_to_string(enum token_type token_type) {
         return "TOKEN_FLOAT_LITERAL";
     case TOKEN_STRING_LITERAL:
         return "TOKEN_STRING_LITERAL";
+    case TOKEN_EQUAL:
+        return "TOKEN_EQUAL";
+
+    case TOKEN_OPERATOR_PLUS:
+        return "TOKEN_OPERATOR_PLUS";
+    case TOKEN_OPERATOR_MINUS:
+        return "TOKEN_OPERATOR_MINUS";
+    case TOKEN_OPERATOR_MULT:
+        return "TOKEN_OPERATOR_MULT";
+    case TOKEN_OPERATOR_DIV:
+        return "TOKEN_OPERATOR_DIV";
+    case TOKEN_OPERATOR_MOD:
+        return "TOKEN_OPERATOR_MOD";
+    case TOKEN_OPERATOR_DOT:
+        return "TOKEN_OPERATOR_DOT";
+    case TOKEN_OPERATOR_ARROW:
+        return "TOKEN_OPERATOR_ARROW";
+    case TOKEN_OPERATOR_EQUALS:
+        return "TOKEN_OPERATOR_EQUALS";
     }
 
     return "unknown token";
@@ -87,10 +109,7 @@ static char *assert_tokens(struct token expected[], struct token *tokens) {
             }
             is_finished = true;
         }
-        else if (expected[idx].value != 0 && token->value != 0) {
-            has_error = true;
-        }
-        else if (strcmp(expected[idx].value, token->value) != 0) {
+        else if (strcmp(to_string(expected[idx].value), to_string(token->value)) != 0) {
             has_error = true;
         }
         else if (expected[idx].type != token->type) {
@@ -129,9 +148,9 @@ static char *test_minimal_func_decl() {
     struct token *tokens = tokenize(content);
 
     static struct token expected_tokens[] = {
-        {"fn", TOKEN_KEYWORD, {0, 2, 0, 0}, 0},   {"f", TOKEN_STRING_LITERAL, {3, 1, 0, 0}, 0},
-        {"(", TOKEN_OPEN_PAREN, {4, 1, 0, 0}, 0}, {")", TOKEN_CLOSE_PAREN, {5, 1, 0, 0}, 0},
-        {"{", TOKEN_OPEN_BRACE, {7, 1, 0, 0}, 0}, {"}", TOKEN_CLOSE_BRACE, {8, 1, 0, 0}, 0},
+        {"fn", TOKEN_KEYWORD, {0, 2, 0, 0}, 0}, {"f", TOKEN_STRING_LITERAL, {3, 1, 0, 0}, 0},
+        {0, TOKEN_OPEN_PAREN, {4, 1, 0, 0}, 0}, {0, TOKEN_CLOSE_PAREN, {5, 1, 0, 0}, 0},
+        {0, TOKEN_OPEN_BRACE, {7, 1, 0, 0}, 0}, {0, TOKEN_CLOSE_BRACE, {8, 1, 0, 0}, 0},
         {0, TOKEN_EOF, {8, 0, 0, 0}, 0}};
 
     return assert_tokens(expected_tokens, tokens);
