@@ -21,7 +21,9 @@
             printf(u8"  𐄂 " #unit_test "\n");                                                                          \
             printf(u8"    → error: %s\n", message);                                                                    \
             test_fail_counter += 1;                                                                                    \
-        } else {                                                                                                       \
+            free(message);                                                                                             \
+        }                                                                                                              \
+        else {                                                                                                         \
             printf(u8"  ✓ " #unit_test "\n");                                                                          \
         }                                                                                                              \
     } while (0)

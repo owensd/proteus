@@ -1,53 +1,123 @@
 // Provides the tests for basic function lexing.
 
+static char *token_type_to_string(enum token_type token_type) {
+    switch (token_type) {
+    case TOKEN_EOF:
+        return "TOKEN_EOF";
+    case TOKEN_KEYWORD:
+        return "TOKEN_KEYWORD";
+    case TOKEN_OPEN_PAREN:
+        return "TOKEN_OPEN_PAREN";
+    case TOKEN_CLOSE_PAREN:
+        return "TOKEN_CLOSE_PAREN";
+    case TOKEN_OPEN_BRACE:
+        return "TOKEN_OPEN_BRACE";
+    case TOKEN_CLOSE_BRACE:
+        return "TOKEN_CLOSE_BRACE";
+    case TOKEN_FUNC_RETURN_TYPE_DECL:
+        return "TOKEN_FUNC_RETURN_TYPE_DECL";
+    case TOKEN_INTEGER_LITERAL:
+        return "TOKEN_INTEGER_LITERAL";
+    case TOKEN_FLOAT_LITERAL:
+        return "TOKEN_FLOAT_LITERAL";
+    case TOKEN_STRING_LITERAL:
+        return "TOKEN_STRING_LITERAL";
+    }
+
+    return "unknown token";
+}
+
+static char *to_string(char *s) {
+    if (s)
+        return s;
+
+    return "";
+}
+
+static char *token_to_string(struct token *token) {
+    static int max_length = 100;
+    char *buffer = malloc(sizeof(char) * max_length);
+
+    char *fmt = "type: %s, value: '%s', offset: %d:%d, line: %d, col: %d";
+    int result = snprintf(buffer, max_length, fmt, token_type_to_string(token->type), to_string(token->value),
+                          token->location.offset, token->location.length, token->location.line, token->location.column);
+    if (result >= 0 && result < max_length) {
+        return buffer;
+    }
+
+    free(buffer);
+    return 0;
+}
+
+static char *token_info(struct token *expected, struct token *actual) {
+    static int max_length = 255;
+    char *buffer = malloc(sizeof(char) * max_length);
+
+    char *expected_str = token_to_string(expected);
+    char *actual_str = token_to_string(actual);
+
+    int result =
+        snprintf(buffer, max_length, "\n        [expected] %s\n          [actual] %s", expected_str, actual_str);
+
+    if (expected_str)
+        free(expected_str);
+
+    if (actual_str)
+        free(actual_str);
+
+    if (result >= 0 && result < max_length) {
+        return buffer;
+    }
+
+    free(buffer);
+    return 0;
+}
+
 static char *assert_tokens(struct token expected[], struct token *tokens) {
     char *errmsg = 0;
     int idx = 0;
     struct token *token = tokens;
-    while (1) {
-        if (token == 0) {
-            errmsg = "token is a null pointer!";
-            break;
-        }
 
+    bool is_finished = false;
+    bool has_error = false;
+    while (!is_finished) {
         if (expected[idx].type == TOKEN_EOF || token->type == TOKEN_EOF) {
             if (expected[idx].type != TOKEN_EOF || token->type != TOKEN_EOF) {
-                errmsg = "tokens differ";
+                has_error = true;
             }
+            is_finished = true;
+        }
+        else if (expected[idx].value != 0 && token->value != 0) {
+            has_error = true;
+        }
+        else if (strcmp(expected[idx].value, token->value) != 0) {
+            has_error = true;
+        }
+        else if (expected[idx].type != token->type) {
+            has_error = true;
+        }
+        else if (expected[idx].location.offset != token->location.offset) {
+            has_error = true;
+        }
+        else if (expected[idx].location.length != token->location.length) {
+            has_error = true;
+        }
+        else if (expected[idx].location.line != token->location.line) {
+            has_error = true;
+        }
+        else if (expected[idx].location.column != token->location.column) {
+            has_error = true;
+        }
+
+        if (has_error) {
+            errmsg = token_info(&expected[idx], token);
             break;
         }
 
-        if (expected[idx].value != 0 && token->value != 0) {
-            errmsg = "tokens differ";
-            break;
+        if (!is_finished) {
+            idx++;
+            token = token->next;
         }
-        if (strcmp(expected[idx].value, token->value) != 0) {
-            errmsg = "tokens differ";
-            break;
-        }
-        if (expected[idx].type != token->type) {
-            errmsg = "tokens differ";
-            break;
-        }
-        if (expected[idx].location.offset != token->location.offset) {
-            errmsg = "tokens differ";
-            break;
-        }
-        if (expected[idx].location.length != token->location.length) {
-            errmsg = "tokens differ";
-            break;
-        }
-        if (expected[idx].location.line != token->location.line) {
-            errmsg = "tokens differ";
-            break;
-        }
-        if (expected[idx].location.column != token->location.column) {
-            errmsg = "tokens differ";
-            break;
-        }
-
-        idx++;
-        token = token->next;
     }
 
     return errmsg;
