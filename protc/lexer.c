@@ -11,8 +11,7 @@ enum token_type {
     TOKEN_CLOSE_BRACE,
     TOKEN_COMMA,
     TOKEN_FUNC_RETURN_TYPE_DECL,
-    TOKEN_INTEGER_LITERAL,
-    TOKEN_FLOAT_LITERAL,
+    TOKEN_NUMBER_LITERAL,
     TOKEN_STRING_LITERAL,
     TOKEN_EQUAL,
 
@@ -42,16 +41,20 @@ struct token {
     struct token *next;
 };
 
-char next(const char *s, size_t len, size_t n) {
+char peek(const char *s, size_t len, size_t n) {
     if (n < len) {
         return s[n];
     }
     return '\0';
 }
 
+char next(const char *s, size_t len, size_t n) { return peek(s, len, n + 1); }
+
 bool is_keyword(const char *s) {
     // todo: convert this to a hash and do a binary search across the table or implement an O(1) hash.
     if (strcmp(s, "fn") == 0)
+        return true;
+    if (strcmp(s, "return") == 0)
         return true;
 
     return false;
@@ -195,7 +198,7 @@ struct token *tokenize(char *content) {
         else if (is_char(content[idx])) {
             length = 1;
             while (true) {
-                char c = next(content, content_length, idx + length);
+                char c = peek(content, content_length, idx + length);
                 if (is_char(c) || is_digit(c) || c == '_') {
                     length++;
                 }
@@ -213,6 +216,32 @@ struct token *tokenize(char *content) {
 
             if (is_keyword(token->value))
                 token->type = TOKEN_KEYWORD;
+        }
+        else if (is_digit(content[idx])) {
+            length = 1;
+
+            bool dot_seen = false;
+            while (true) {
+                char c = peek(content, content_length, idx + length);
+                if (is_digit(c) || c == '.') {
+                    if (dot_seen)
+                        break;
+                    if (c == '.')
+                        dot_seen = true;
+
+                    length++;
+                }
+                else {
+                    break;
+                }
+            }
+
+            token = calloc(1, sizeof(struct token));
+            token->type = TOKEN_NUMBER_LITERAL;
+            token->value = calloc(length + 1, sizeof(char));
+            strncpy(token->value, &content[idx], length);
+            token->location.offset = idx;
+            token->location.length = length;
         }
         else {
             // skip other stuff for now

@@ -19,10 +19,8 @@ static char *token_type_to_string(enum token_type token_type) {
         return "TOKEN_COMMA";
     case TOKEN_FUNC_RETURN_TYPE_DECL:
         return "TOKEN_FUNC_RETURN_TYPE_DECL";
-    case TOKEN_INTEGER_LITERAL:
-        return "TOKEN_INTEGER_LITERAL";
-    case TOKEN_FLOAT_LITERAL:
-        return "TOKEN_FLOAT_LITERAL";
+    case TOKEN_NUMBER_LITERAL:
+        return "TOKEN_NUMBER_LITERAL";
     case TOKEN_STRING_LITERAL:
         return "TOKEN_STRING_LITERAL";
     case TOKEN_EQUAL:
@@ -156,14 +154,25 @@ static char *test_minimal_func_decl() {
     return assert_tokens(expected_tokens, tokens);
 }
 
-// fn f() {}
-// // #tokens
-// // keyword: fn
-// // string_literal: f
-// // open_paren
-// // close_paren
-// // open_brace
-// // close_brace
+static char *test_minimal_func_decl_with_return_type() {
+    char *content = "fn f() -> i32 { return 12 }";
+
+    struct token *tokens = tokenize(content);
+
+    static struct token expected_tokens[] = {{"fn", TOKEN_KEYWORD, {0, 2, 0, 0}, 0},
+                                             {"f", TOKEN_STRING_LITERAL, {3, 1, 0, 0}, 0},
+                                             {0, TOKEN_OPEN_PAREN, {4, 1, 0, 0}, 0},
+                                             {0, TOKEN_CLOSE_PAREN, {5, 1, 0, 0}, 0},
+                                             {0, TOKEN_OPERATOR_ARROW, {7, 2, 0, 0}},
+                                             {"i32", TOKEN_STRING_LITERAL, {10, 3, 0, 0}},
+                                             {0, TOKEN_OPEN_BRACE, {14, 1, 0, 0}, 0},
+                                             {"return", TOKEN_KEYWORD, {16, 6, 0, 0}},
+                                             {"12", TOKEN_NUMBER_LITERAL, {23, 2, 0, 0}},
+                                             {0, TOKEN_CLOSE_BRACE, {26, 1, 0, 0}, 0},
+                                             {0, TOKEN_EOF, {28, 0, 0, 0}, 0}};
+
+    return assert_tokens(expected_tokens, tokens);
+}
 
 // fn f() -> i32 { return 12 }
 // // #tokens
