@@ -14,6 +14,7 @@ enum token_type {
     TOKEN_NUMBER_LITERAL,
     TOKEN_STRING_LITERAL,
     TOKEN_EQUAL,
+    TOKEN_COLON,
 
     TOKEN_OPERATOR_PLUS,
     TOKEN_OPERATOR_MINUS,
@@ -121,6 +122,13 @@ struct token *tokenize(char *content) {
         else if (content[idx] == ',') {
             token = calloc(1, sizeof(struct token));
             token->type = TOKEN_COMMA;
+            token->location.offset = idx;
+            token->location.length = 1;
+            length += 1;
+        }
+        else if (content[idx] == ':') {
+            token = calloc(1, sizeof(struct token));
+            token->type = TOKEN_COLON;
             token->location.offset = idx;
             token->location.length = 1;
             length += 1;

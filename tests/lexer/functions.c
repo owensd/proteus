@@ -25,6 +25,8 @@ static char *token_type_to_string(enum token_type token_type) {
         return "TOKEN_STRING_LITERAL";
     case TOKEN_EQUAL:
         return "TOKEN_EQUAL";
+    case TOKEN_COLON:
+        return "TOKEN_COLON";
 
     case TOKEN_OPERATOR_PLUS:
         return "TOKEN_OPERATOR_PLUS";
@@ -174,18 +176,25 @@ static char *test_minimal_func_decl_with_return_type() {
     return assert_tokens(expected_tokens, tokens);
 }
 
-// fn f() -> i32 { return 12 }
-// // #tokens
-// // keyword: fn
-// // string_literal: f
-// // open_paren
-// // close_paren
-// // func_return_type_decl
-// // string_literal: i32
-// // open_brace
-// // keyword: return
-// // number_literal: 12
-// // close_brace
+static char *test_minimal_func_decl_with_return_type_and_crazy_spacing() {
+    char *content = "fn f_g(\n\t\t\ti: i32,\n    foo_bar: f32           )\n\n\t     -> \n   \n   \n i32\n\t\n\t { "
+                    "\t\n\n\n\t  \treturn 12 \t\t}";
+
+    struct token *tokens = tokenize(content);
+
+    static struct token expected_tokens[] = {
+        {"fn", TOKEN_KEYWORD, {0, 2, 0, 0}, 0},       {"f_g", TOKEN_STRING_LITERAL, {3, 3, 0, 0}, 0},
+        {0, TOKEN_OPEN_PAREN, {6, 1, 0, 0}, 0},       {"i", TOKEN_STRING_LITERAL, {11, 1, 0, 0}},
+        {0, TOKEN_COLON, {12, 1, 0, 0}, 0},           {"i32", TOKEN_STRING_LITERAL, {14, 3, 0, 0}},
+        {0, TOKEN_COMMA, {17, 1, 0, 0}, 0},           {"foo_bar", TOKEN_STRING_LITERAL, {23, 7, 0, 0}},
+        {0, TOKEN_COLON, {30, 1, 0, 0}, 0},           {"f32", TOKEN_STRING_LITERAL, {32, 3, 0, 0}},
+        {0, TOKEN_CLOSE_PAREN, {46, 1, 0, 0}, 0},     {0, TOKEN_OPERATOR_ARROW, {55, 2, 0, 0}},
+        {"i32", TOKEN_STRING_LITERAL, {68, 3, 0, 0}}, {0, TOKEN_OPEN_BRACE, {76, 1, 0, 0}, 0},
+        {"return", TOKEN_KEYWORD, {86, 6, 0, 0}},     {"12", TOKEN_NUMBER_LITERAL, {93, 2, 0, 0}},
+        {0, TOKEN_CLOSE_BRACE, {98, 1, 0, 0}, 0},     {0, TOKEN_EOF, {30, 0, 0, 0}, 0}};
+
+    return assert_tokens(expected_tokens, tokens);
+}
 
 // fn f_g(
 //     i: i32,
