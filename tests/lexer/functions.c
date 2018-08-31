@@ -195,36 +195,3 @@ static char *test_minimal_func_decl_with_return_type_and_crazy_spacing() {
 
     return assert_tokens(expected_tokens, tokens);
 }
-
-// fn f_g(
-//     i: i32,
-//     foo_bar: f32           )
-
-//     ->
-
-//                     f32
-//     {
-
-//                     return i * foo_bar/3.1234567891234}
-// // #tokens
-// // keyword: fn
-// // string_literal: f_g
-// // open_paren
-// // string_literal: i
-// // type_decl
-// // string_literal: i32
-// // comma
-// // string_literal: foo_bar
-// // type_decl
-// // string_literal: f32
-// // close_paren
-// // func_return_type_decl
-// // string_literal: f32
-// // open_brace
-// // keyword: return
-// // string_literal: i
-// // operator_*
-// // string_literal: foo_bar
-// // operator_/
-// // number_literal: 3.1234567891234
-// // close_brace
