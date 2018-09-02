@@ -1,54 +1,5 @@
 // Provides the tests for basic function lexing.
 
-static char *token_type_to_string(enum token_type token_type) {
-    switch (token_type) {
-    case TOKEN_EOF:
-        return "TOKEN_EOF";
-
-    case TOKEN_KEYWORD:
-        return "TOKEN_KEYWORD";
-    case TOKEN_OPEN_PAREN:
-        return "TOKEN_OPEN_PAREN";
-    case TOKEN_CLOSE_PAREN:
-        return "TOKEN_CLOSE_PAREN";
-    case TOKEN_OPEN_BRACE:
-        return "TOKEN_OPEN_BRACE";
-    case TOKEN_CLOSE_BRACE:
-        return "TOKEN_CLOSE_BRACE";
-    case TOKEN_COMMA:
-        return "TOKEN_COMMA";
-    case TOKEN_FUNC_RETURN_TYPE_DECL:
-        return "TOKEN_FUNC_RETURN_TYPE_DECL";
-    case TOKEN_NUMBER_LITERAL:
-        return "TOKEN_NUMBER_LITERAL";
-    case TOKEN_STRING_LITERAL:
-        return "TOKEN_STRING_LITERAL";
-    case TOKEN_EQUAL:
-        return "TOKEN_EQUAL";
-    case TOKEN_COLON:
-        return "TOKEN_COLON";
-
-    case TOKEN_OPERATOR_PLUS:
-        return "TOKEN_OPERATOR_PLUS";
-    case TOKEN_OPERATOR_MINUS:
-        return "TOKEN_OPERATOR_MINUS";
-    case TOKEN_OPERATOR_MULT:
-        return "TOKEN_OPERATOR_MULT";
-    case TOKEN_OPERATOR_DIV:
-        return "TOKEN_OPERATOR_DIV";
-    case TOKEN_OPERATOR_MOD:
-        return "TOKEN_OPERATOR_MOD";
-    case TOKEN_OPERATOR_DOT:
-        return "TOKEN_OPERATOR_DOT";
-    case TOKEN_OPERATOR_ARROW:
-        return "TOKEN_OPERATOR_ARROW";
-    case TOKEN_OPERATOR_EQUALS:
-        return "TOKEN_OPERATOR_EQUALS";
-    }
-
-    return "unknown token";
-}
-
 static char *to_string(char *s) {
     if (s)
         return s;
